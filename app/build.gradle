@@ -1,0 +1,104 @@
+apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-kapt'
+apply plugin: 'kotlin-android-extensions'
+
+android {
+    compileSdkVersion 28
+    defaultConfig {
+        applicationId "com.github.ramonrabello.favorite_hero"
+        minSdkVersion 15
+        targetSdkVersion 28
+        versionCode 1
+        versionName "1.0"
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        vectorDrawables { useSupportLibrary = true }
+        buildConfigField "String", "MARVEL_API_BASE_URL", '"http://gateway.marvel.com"'
+        buildConfigField "String", "PUBLIC_KEY", '"b4b048ba2a6f9194c635e1bd9a3f57c6"'
+        buildConfigField "String", "PRIVATE_KEY", '"8533bcfe4a2e52a41369f2d9e49b516614b223f4"'
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+}
+
+dependencies {
+    def kotlinDependencies = rootProject.ext.kotlinDependencies
+    def supportDependencies = rootProject.ext.supportDependencies
+    def uiDependencies = rootProject.ext.uiDependencies
+    def networkDependencies = rootProject.ext.networkDependencies
+    def archDependencies = rootProject.ext.archDependencies
+    def testingDependencies = rootProject.ext.testingDependencies
+
+    // region Kotlin
+    implementation kotlinDependencies.stdlib
+    implementation kotlinDependencies.coroutines
+    // endregion
+
+    // region Support libraries
+    implementation supportDependencies.appcompat
+    implementation supportDependencies.design
+    implementation supportDependencies.cardview
+    implementation supportDependencies.constraintLayout
+    implementation supportDependencies.supportFragment
+    // endregion
+
+    // region UI
+    implementation uiDependencies.superRecyclerView
+    implementation(uiDependencies.glide) {
+        exclude group: "com.android.support"
+    }
+    implementation uiDependencies.readMoreTextView
+    // endregion
+
+    // region Network
+    implementation networkDependencies.gson
+    implementation networkDependencies.okhttp
+    implementation networkDependencies.okio
+    implementation networkDependencies.loggingInterceptor
+    implementation networkDependencies.retrofit
+    implementation networkDependencies.retrofitRxJava2Adapter
+    implementation networkDependencies.retrofitConverterJson
+    // endregion
+
+    // region Architecture
+    implementation archDependencies.lifecycleExtensions
+    implementation archDependencies.rxAndroid
+    implementation archDependencies.dagger
+    implementation archDependencies.daggerAndroid
+    implementation archDependencies.daggerAndroidSupport
+    implementation archDependencies.room
+    implementation archDependencies.roomRxJava2
+    kapt archDependencies.daggerCompiler
+    kapt archDependencies.daggerAndroidProcessor
+    kapt archDependencies.roomCompiler
+    //kapt archDependencies.javaPoet
+    api archDependencies.javaxAnnotation
+    // endregion
+
+    // region Testing
+    testImplementation testingDependencies.junit
+    testImplementation testingDependencies.hamcrest
+    testImplementation testingDependencies.junit
+    testImplementation testingDependencies.mockWebServer
+    androidTestImplementation testingDependencies.supportTestRunner
+    androidTestImplementation testingDependencies.supportTestRules
+    androidTestImplementation testingDependencies.archComponents
+    androidTestImplementation testingDependencies.espressoCore
+    androidTestImplementation testingDependencies.espressoContrib
+    androidTestImplementation testingDependencies.espressoIntents
+    androidTestImplementation testingDependencies.espressoIdlingResource
+    // endregion
+}
+kotlin {
+    experimental {
+        coroutines "enable"
+    }
+}
+
+androidExtensions {
+    experimental = true
+}

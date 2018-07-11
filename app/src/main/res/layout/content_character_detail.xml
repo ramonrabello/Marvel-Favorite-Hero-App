@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v4.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context="com.github.ramonrabello.favoritehero.detail.CharacterDetailActivity"
+    tools:showIn="@layout/activity_character_detail">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:orientation="vertical"
+        android:paddingBottom="16dp"
+        android:layout_height="match_parent">
+
+        <TextView
+            android:id="@+id/hero_description"
+            android:layout_width="match_parent"
+            android:layout_marginTop="36dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginRight="16dp"
+            android:layout_marginEnd="16dp"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:layout_height="wrap_content" />
+
+        <!-- region Comics -->
+        <TextView
+            android:id="@+id/comics_section_title"
+            android:layout_width="wrap_content"
+            android:text="@string/comics_section_title"
+            android:layout_marginTop="16dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginStart="16dp"
+            android:textColor="@color/black"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:layout_height="wrap_content"/>
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/comics_recycler_view"
+            android:layout_width="match_parent"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior"
+            android:layout_height="wrap_content"/>
+        <!-- endregion -->
+
+        <!-- region Events -->
+        <TextView
+            android:id="@+id/events_section_title"
+            android:layout_width="wrap_content"
+            android:text="@string/events_section_title"
+            android:layout_marginTop="32dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginStart="16dp"
+            android:textColor="@color/black"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:layout_height="wrap_content"/>
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/events_recycler_view"
+            android:layout_width="match_parent"
+            app:layout_empty="@layout/detail_data_empty_view"
+            android:layout_height="wrap_content"/>
+        <!-- endregion -->
+
+        <!-- region Stories -->
+        <TextView
+            android:id="@+id/stories_section_title"
+            android:layout_width="wrap_content"
+            android:text="@string/stories_section_title"
+            android:layout_marginTop="16dp"
+            android:layout_marginLeft="32dp"
+            android:layout_marginStart="16dp"
+            android:textColor="@color/black"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:layout_height="wrap_content"/>
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/stories_recycler_view"
+            android:layout_width="match_parent"
+            app:layout_empty="@layout/detail_data_empty_view"
+            android:layout_height="wrap_content"/>
+        <!-- endregion -->
+
+        <!-- region Series -->
+        <TextView
+            android:id="@+id/series_section_title"
+            android:layout_width="wrap_content"
+            android:text="@string/series_section_title"
+            android:layout_marginTop="32dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginStart="16dp"
+            android:textColor="@color/black"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:layout_height="wrap_content"/>
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/series_recycler_view"
+            android:layout_width="match_parent"
+            app:layout_empty="@layout/detail_data_empty_view"
+            android:layout_height="wrap_content"/>
+        <!-- endregion -->
+
+    </LinearLayout>
+
+
+</android.support.v4.widget.NestedScrollView>
