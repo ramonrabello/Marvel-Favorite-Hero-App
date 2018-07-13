@@ -7,11 +7,6 @@ import android.support.test.InstrumentationRegistry
 import android.support.test.runner.AndroidJUnit4
 import com.github.ramonrabello.favoritehero.data.repository.local.entity.FavoriteHero
 import io.reactivex.Single
-import org.hamcrest.CoreMatchers.`is`
-import org.hamcrest.CoreMatchers.not
-import org.hamcrest.MatcherAssert.assertThat
-import org.hamcrest.Matchers.emptyCollectionOf
-import org.hamcrest.Matchers.hasSize
 import org.junit.After
 import org.junit.Before
 import org.junit.Rule
@@ -69,9 +64,8 @@ class FavoriteHeroDaoTest {
                 FavoriteHero(UUID.randomUUID().mostSignificantBits, name = "Incredible Hulk", description = "My third favorite super hero", thumbnail = "http://www.somedomain.com/img/incredible_hulk.jpg"),
                 FavoriteHero(UUID.randomUUID().mostSignificantBits, name = "Spider-Man", description = "My fourth favorite super hero", thumbnail = "http://www.somedomain.com/img/spider_man.jpg"))
         allHeroes.forEach { hero -> heroDao.insert(hero) }
-        heroDao.allHeroes().observeForever { it ->
-            assertThat(it, `is`(not(emptyCollectionOf(FavoriteHero::class.java))))
-            assertThat(it, `is`(hasSize(allHeroes.size)))
+        heroDao.loadAllFavoriteHeroes().test().assertValue { valuePredicate ->
+            valuePredicate.isNotEmpty() && valuePredicate.size == allHeroes.size
         }
     }
 
