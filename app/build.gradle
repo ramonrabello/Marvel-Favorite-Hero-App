@@ -13,11 +13,19 @@ android {
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         vectorDrawables { useSupportLibrary = true }
+
         buildConfigField "String", "MARVEL_API_BASE_URL", '"http://gateway.marvel.com"'
-        buildConfigField "String", "PUBLIC_KEY", '"b4b048ba2a6f9194c635e1bd9a3f57c6"'
-        buildConfigField "String", "PRIVATE_KEY", '"8533bcfe4a2e52a41369f2d9e49b516614b223f4"'
+
+        // build config fields that need to be set before running the app. For more details
+        // on how to get your public and private keys, please go to
+        // developer.marvel.com
+        buildConfigField "String", "PUBLIC_KEY", '"GET_YOUR_KEY_AT_MARVEL_DEVELOPER_PORTAL"'
+        buildConfigField "String", "PRIVATE_KEY", '"GET_YOUR_KEY_AT_MARVEL_DEVELOPER_PORTAL"'
     }
     buildTypes {
+        debug {
+            testCoverageEnabled true
+        }
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
@@ -83,6 +91,7 @@ dependencies {
     testImplementation testingDependencies.junit
     testImplementation testingDependencies.hamcrest
     testImplementation testingDependencies.junit
+    testImplementation testingDependencies.mockito
     testImplementation testingDependencies.mockWebServer
     androidTestImplementation testingDependencies.supportTestRunner
     androidTestImplementation testingDependencies.supportTestRules
