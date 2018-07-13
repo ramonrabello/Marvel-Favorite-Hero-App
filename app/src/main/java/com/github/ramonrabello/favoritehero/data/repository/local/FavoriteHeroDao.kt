@@ -7,9 +7,12 @@ import android.arch.persistence.room.Insert
 import android.arch.persistence.room.OnConflictStrategy
 import android.arch.persistence.room.Query
 import com.github.ramonrabello.favoritehero.data.repository.local.entity.FavoriteHero
+import io.reactivex.Flowable
+import io.reactivex.Maybe
+import io.reactivex.Single
 
 /**
- * DAO for operations related to [CharacterItem]s.
+ * DAO for operations related to [FavoriteHero]s.
  */
 @Dao
 interface FavoriteHeroDao {
@@ -21,11 +24,11 @@ interface FavoriteHeroDao {
     fun delete(favoriteHero: FavoriteHero): Int
 
     @Query("SELECT * FROM heroes ORDER BY name ASC")
-    fun allHeroes(): LiveData<List<FavoriteHero>>
+    fun loadAllFavoriteHeroes(): Maybe<List<FavoriteHero>>
 
     @Query("SELECT * FROM heroes WHERE name LIKE '%' || :name || '%' ORDER BY name ASC")
-    fun searchHeroByName(name: String): LiveData<List<FavoriteHero>>
+    fun searchHeroByName(name: String): Maybe<List<FavoriteHero>>
 
     @Query("SELECT * FROM heroes WHERE id = :heroId")
-    fun findHeroById(heroId: Long): FavoriteHero?
+    fun findHeroById(heroId: Long): Single<FavoriteHero>
 }
