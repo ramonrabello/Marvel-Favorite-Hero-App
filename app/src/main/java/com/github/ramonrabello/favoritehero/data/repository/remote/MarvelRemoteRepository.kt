@@ -10,7 +10,7 @@ import io.reactivex.Maybe
 import javax.inject.Inject
 
 /**
- *
+ * Remote repository that used call Marvel API endpoints.
  */
 class MarvelRemoteRepository @Inject constructor(private val marvelApi: MarvelApi) {
 
