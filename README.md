@@ -67,15 +67,15 @@ architecture, UI, network, testing (unit and instrumentation).
 # Screenshots
 ## Heroes Listing and Search
 ![Hero List]
-(screenshots/hero-list-screen.png)
+(/screenshots/hero-list-screen.png)
 
 ## Favorite Heroes
 ![Favorite Heroes]
-(screenshots/favorites-screen.png)
+(/screenshots/favorites-screen.png)
 
 ## Hero Details
 ![Hero Details]
-(screenshots/details-screen.png)
+(/screenshots/details-screen.png)
 
 # License
     Copyright 2018 Ramon Rabello
