@@ -66,16 +66,13 @@ architecture, UI, network, testing (unit and instrumentation).
 
 # Screenshots
 ## Heroes Listing and Search
-![Hero List]
-(https://github.com/ramonrabello/Marvel-Favorite-Hero-App/blob/master/screenshots/hero-list-screen.png)
+![Hero List](https://github.com/ramonrabello/Marvel-Favorite-Hero-App/blob/master/screenshots/hero-list-screen.png)
 
 ## Favorite Heroes
-![Favorite Heroes]
-(https://github.com/ramonrabello/Marvel-Favorite-Hero-App/blob/master/screenshots/favorites-screen.png)
+![Favorite Heroes](https://github.com/ramonrabello/Marvel-Favorite-Hero-App/blob/master/screenshots/favorites-screen.png)
 
 ## Hero Details
-![Hero Details]
-(https://github.com/ramonrabello/Marvel-Favorite-Hero-App/blob/master/screenshots/details-screen.png)
+![Hero Details](https://github.com/ramonrabello/Marvel-Favorite-Hero-App/blob/master/screenshots/details-screen.png)
 
 # License
     Copyright 2018 Ramon Rabello
