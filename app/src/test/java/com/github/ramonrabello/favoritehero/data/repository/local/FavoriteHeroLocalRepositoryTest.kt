@@ -35,14 +35,14 @@ class FavoriteHeroLocalRepositoryTest {
 
     @Test
     fun `given a hero then should verify if it was deleted`() {
-        repository = FavoriteHeroLocalRepository(dao)
-        repository.delete(hero)
-        verify(dao).delete(hero)
+        launch {
+            repository.delete(hero)
+            verify(dao).delete(hero)
+        }
     }
 
     @Test
     fun `verify search heroes by name`() {
-        repository = FavoriteHeroLocalRepository(dao)
         launch {
             repository.searchByName("Spider-Man")
             verify(dao).searchHeroByName(hero.name)
@@ -51,7 +51,6 @@ class FavoriteHeroLocalRepositoryTest {
 
     @Test
     fun `given a hero id should test if it was found`() {
-        repository = FavoriteHeroLocalRepository(dao)
         launch {
             repository.findById(hero.id)
             verify(dao).findHeroById(hero.id)
@@ -60,7 +59,6 @@ class FavoriteHeroLocalRepositoryTest {
 
     @Test
     fun `should get all heroes from repository`() {
-        repository = FavoriteHeroLocalRepository(dao)
         launch {
             repository.loadAllHeroes()
             verify(dao).loadAllFavoriteHeroes()
