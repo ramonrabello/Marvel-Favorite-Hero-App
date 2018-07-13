@@ -35,17 +35,17 @@ class CharacterViewHolder(itemView: View,
 
     override fun bind(item: Character) {
         val favoriteHero = FavoriteHero(item.id, item.name, item.description, item.thumbnail.toString())
-//        favoriteHeroViewModel.observeFavoriteHeroState(favoriteHero)
-//        favoriteHeroViewModel.favoriteIconStateLiveData.observe(context as FragmentActivity, Observer<Boolean> { isFavorite ->
-//            isFavorite?.let {
-//                if (isFavorite){
-//                    itemView.favorite_icon.setBackgroundResource(R.drawable.ic_heart_filled)
-//                } else {
-//                    itemView.favorite_icon.setBackgroundResource(R.drawable.ic_heart_outline)
-//                }
-//            }
-//
-//        })
+        favoriteHeroViewModel.observeFavoriteHeroState(favoriteHero)
+        favoriteHeroViewModel.favoriteIconStateLiveData.observe(context as FragmentActivity, Observer { isFavorite ->
+            isFavorite?.let {
+                if (isFavorite){
+                    itemView.favorite_icon.setBackgroundResource(R.drawable.ic_heart_filled)
+                } else {
+                    itemView.favorite_icon.setBackgroundResource(R.drawable.ic_heart_outline)
+                }
+            }
+
+        })
         itemView.apply {
             hero_name.text = item.name
             hero_description.text = if (item.description == null || item.description.isEmpty()) {

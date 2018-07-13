@@ -100,6 +100,12 @@ class HeroListFragment : DaggerFragment(), Injectable, CharacterViewHolder.OnFav
         viewModel.loadHeroes(viewModel.currentOffset)
     }
 
+    override fun onStop() {
+        super.onStop()
+        viewModel.currentOffset = 0
+        heroAdapter.clear()
+    }
+
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         outState.putParcelable("lmState", recycler_view.recyclerView.layoutManager.onSaveInstanceState())
@@ -131,11 +137,6 @@ class HeroListFragment : DaggerFragment(), Injectable, CharacterViewHolder.OnFav
                 if (recyclerState != null){
                     recycler_view.recyclerView.layoutManager.onRestoreInstanceState(recyclerState)
                 }
-
-                //if (viewModel.isSearching) {
-                    //heroAdapter.clear()
-                //}
-
                 heroAdapter.addItems(results)
                 //viewModel.isSearching = false
 

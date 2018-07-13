@@ -48,7 +48,7 @@ class FavoriteHeroViewModel @Inject internal constructor(val repository: Favorit
                             { foundFavoriteHero -> favoriteIconStateLiveData.postValue(foundFavoriteHero.id == favoriteHero.id) },
                             { error ->
                                 when (error) {
-                                    is EmptyResultSetException -> favoriteIconStateLiveData.postValue(true)
+                                    is EmptyResultSetException -> favoriteIconStateLiveData.postValue(false)
                                     else -> errorLiveData.postValue(R.string.favorite_hero_error)
                                 }
                             }

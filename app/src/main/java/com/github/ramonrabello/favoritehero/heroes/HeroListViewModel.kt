@@ -25,7 +25,6 @@ class HeroListViewModel @Inject internal constructor(private val repository: Mar
     val errorLiveData = MutableLiveData<Int>()
     private val compositeDisposable = CompositeDisposable()
     var currentOffset: Int = 0
-        private set
 
     var isSearching: Boolean = false
 
@@ -45,10 +44,12 @@ class HeroListViewModel @Inject internal constructor(private val repository: Mar
     }
 
     fun searchHeroes(query: String) {
-        if (query.isNotEmpty() && query.length > 5) {
+        currentOffset = 0
+        if (query.isNotEmpty()) {
             val disposable = repository.getCharactersByName(query)
                     .toObservable()
-                    .debounce(1, TimeUnit.MILLISECONDS)
+                    .debounce(300, TimeUnit.MILLISECONDS)
+                    .filter { query.length > 5 }
                     .flatMap { item -> Observable.just(item.data.results) }
                     .commonSubscribe(
                             { characters -> searchResultsLiveData.postValue(characters) },
