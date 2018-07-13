@@ -1,6 +1,6 @@
 # Favorite Hero
 
-Great app for Marvel's characters fans with some cool features like searching heroes, 
+Cool app for Marvel's characters fans with some cool features like searching heroes, 
 
 # Setup
 
@@ -21,18 +21,10 @@ view holder, etc.
 
 # Project Architecture
 
-The project was built using the Model-View-ViewModel (MVVM) presentation pattern that eases
+The project was built using the __Model-View-ViewModel (MVVM)__ presentation pattern that eases
 the development by decopling the app layers by providing more testability and promoting more
 reuse. The main difference between the other presentation patterns like the Model-View-Presenter (MVP) is that the MVVM has a reactive approach and
-implements the Observer pattern, where the UI is automatically updated
-as longer has some changes in the model. (ex: loading a model from a repository, a database update for instance).
-The ViewModel is responsible to notify the UI that 
-
-## Model
-
-## View
-
-## ViewModel
+implements the Observer pattern, where the UI observes model changes that are notified by ViewModel.
 
 # Libraries
 
@@ -40,8 +32,62 @@ The file `buildsystem/dependencies.gradle` contains all the library dependencies
 in the project. It is organized by `region`s according to context like support library,
 architecture, UI, network, testing (unit and instrumentation).
 
-# Screenshots
+## Kotlin
+- Kotlin Standard Library 1.2.51
+- Kotlin Coroutines
 
-TBD
+## Support Library 
+- appcompat-v7 27.1.1
+- Design 27.1.1
+- cardview-v7 27.1.1
+- support-fragment 27.1.1
+- constraint-layout 1.1.0
+
+## UI
+- SuperRecyclerView 1.1.4
+- Glide 4.7.1
+- Glide Compiler 4.7.1 (for kapt)
+- ReadMoreTextView 2.1.0
+
+## Network
+- Gson
+- OkHttp 3
+- Retrofit 2
+- RxJava 2
+- Okio
+
+## Architecture
+- Architecture Components (Lifecycle, Room & LiveData) 
+- Dagger 2
+- Room
+## Testing
+- JUnit 4.1.2
+- Mockito 
+
+# Screenshots
+## Heroes Listing and Search
+![Hero List]
+(images/hero-list-screen.png)
+
+## Favorite Heroes
+![Favorite Heroes]
+(images/favorites-screen.png)
+
+## Hero Details
+![Hero Details]
+(images/details-screen.png)
 
 # License
+    Copyright 2018 Ramon Rabello
+    
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+    
+       http://www.apache.org/licenses/LICENSE-2.0
+    
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
