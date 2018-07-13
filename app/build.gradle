@@ -19,8 +19,8 @@ android {
         // build config fields that need to be set before running the app. For more details
         // on how to get your public and private keys, please go to
         // developer.marvel.com
-        buildConfigField "String", "PUBLIC_KEY", '"3cb7271eff5484036b292aaf7ae93c1a"'
-        buildConfigField "String", "PRIVATE_KEY", '"458f616d89897bf317c96e7946f1006e2d0c3a01"'
+        buildConfigField "String", "PUBLIC_KEY", '"GET_YOUR_API_KEY_AT_MARVEL_DEVELOPER_PORTAL"'
+        buildConfigField "String", "PRIVATE_KEY", '"GET_YOUR_API_KEY_AT_MARVEL_DEVELOPER_PORTAL"'
     }
     buildTypes {
         debug {
