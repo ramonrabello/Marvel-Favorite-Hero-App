@@ -7,7 +7,7 @@ data class CharacterDataWrapper(val code: Int, val status: String, val data: Cha
 
 data class CharacterDataContainer(val results: List<Character>)
 data class Character(val id: Long, val name: String,
-                     val description: String,
+                     val description: String?,
                      val thumbnail: Image,
                      val comics: ComicList,
                      val events: EventList,

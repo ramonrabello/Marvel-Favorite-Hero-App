@@ -2,6 +2,9 @@ package com.github.ramonrabello.favoritehero.heroes
 
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
+import android.arch.persistence.room.EmptyResultSetException
+import com.github.ramonrabello.favoritehero.R
+import com.github.ramonrabello.favoritehero.core.ktx.commonSubscribe
 import com.github.ramonrabello.favoritehero.data.repository.local.FavoriteHeroLocalRepository
 import com.github.ramonrabello.favoritehero.data.repository.local.entity.FavoriteHero
 import kotlinx.coroutines.experimental.launch
@@ -10,31 +13,46 @@ import javax.inject.Inject
 /**
  * View model to handle actions to favorite/unfavorite hero.
  */
-class FavoriteHeroViewModel @Inject constructor(val repository: FavoriteHeroLocalRepository) : ViewModel() {
+class FavoriteHeroViewModel @Inject internal constructor(val repository: FavoriteHeroLocalRepository) : ViewModel() {
 
     val favoriteIconStateLiveData = MutableLiveData<Boolean>()
-
-    private fun isFavoriteHero(favoriteHero: FavoriteHero): Boolean {
-        val foundFavoriteHero = repository.findById(favoriteHero.id)
-        foundFavoriteHero?.let {
-            return foundFavoriteHero.id == favoriteHero.id
-        }
-        return false
-    }
+    val errorLiveData = MutableLiveData<Int>()
 
     fun addOrRemoveFavoriteHero(favoriteHero: FavoriteHero) {
-        val isFavoriteHero = isFavoriteHero(favoriteHero)
-        if (!isFavoriteHero) {
-            repository.insert(favoriteHero)
-        } else {
-            repository.delete(favoriteHero)
+        launch {
+            repository.findById(favoriteHero.id)
+                    .commonSubscribe(
+                            {
+                                if (it.id == favoriteHero.id) {
+                                    repository.delete(favoriteHero)
+                                    favoriteIconStateLiveData.postValue(false)
+                                }
+                            },
+                            { error ->
+                                when (error) {
+                                    is EmptyResultSetException -> {
+                                        repository.insert(favoriteHero)
+                                        favoriteIconStateLiveData.postValue(true)
+                                    }
+                                    else -> errorLiveData.postValue(R.string.favorite_hero_error)
+                                }
+                            }
+                    )
         }
-        favoriteIconStateLiveData.postValue(isFavoriteHero)
     }
 
-    fun observeFavoriteHeroState(id: Long) {
+    fun observeFavoriteHeroState(favoriteHero: FavoriteHero) {
         launch {
-            favoriteIconStateLiveData.postValue(repository.findById(id)?.id == id)
+            repository.findById(favoriteHero.id)
+                    .commonSubscribe(
+                            { foundFavoriteHero -> favoriteIconStateLiveData.postValue(foundFavoriteHero.id == favoriteHero.id) },
+                            { error ->
+                                when (error) {
+                                    is EmptyResultSetException -> favoriteIconStateLiveData.postValue(true)
+                                    else -> errorLiveData.postValue(R.string.favorite_hero_error)
+                                }
+                            }
+                    )
         }
     }
 }

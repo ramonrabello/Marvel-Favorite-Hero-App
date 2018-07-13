@@ -1,6 +1,6 @@
 package com.github.ramonrabello.favoritehero
 
-//import com.github.ramonrabello.favoritehero.core.di.component.DaggerAppComponent
+import com.github.ramonrabello.favoritehero.core.di.Injector
 import com.github.ramonrabello.favoritehero.core.di.component.DaggerAppComponent
 import dagger.android.AndroidInjector
 import dagger.android.DaggerApplication
@@ -17,6 +17,7 @@ class FavoriteHeroApplication : DaggerApplication() {
 
     override fun onCreate() {
         super.onCreate()
+        Injector.init(this)
         instance = this
     }
 }

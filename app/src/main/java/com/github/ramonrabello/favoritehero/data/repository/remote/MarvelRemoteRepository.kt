@@ -22,19 +22,19 @@ class MarvelRemoteRepository @Inject constructor(private val marvelApi: MarvelAp
         return marvelApi.getCharactersByName(query)
     }
 
-    fun getCharacterComics(characterId:Long) : Maybe<ComicDataWrapper>{
+    fun getCharacterComics(characterId: Long): Maybe<ComicDataWrapper> {
         return marvelApi.getCharacterComics(characterId)
     }
 
-    fun getCharacterEvents(characterId:Long) : Maybe<EventDataWrapper>{
+    fun getCharacterEvents(characterId: Long): Maybe<EventDataWrapper> {
         return marvelApi.getCharacterEvents(characterId)
     }
 
-    fun getCharacterStories(characterId:Long) : Maybe<StoryDataWrapper>{
+    fun getCharacterStories(characterId: Long): Maybe<StoryDataWrapper> {
         return marvelApi.getCharacterStories(characterId)
     }
 
-    fun getCharacterSeries(characterId: Long) : Maybe<SeriesDataWrapper>{
+    fun getCharacterSeries(characterId: Long): Maybe<SeriesDataWrapper> {
         return marvelApi.getCharacterSeries(characterId)
     }
 }

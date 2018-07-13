@@ -3,14 +3,9 @@ package com.github.ramonrabello.favoritehero.detail
 import android.app.Activity
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProvider
-import android.graphics.drawable.Drawable
-import android.os.Build
 import android.os.Bundle
-import android.support.annotation.ColorInt
 import android.support.v4.app.ActivityCompat
-import android.support.v4.app.NavUtils
 import android.support.v4.content.ContextCompat
-import android.support.v4.graphics.drawable.DrawableCompat
 import android.support.v4.view.ViewCompat
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
@@ -19,10 +14,9 @@ import com.github.ramonrabello.favoritehero.R
 import com.github.ramonrabello.favoritehero.core.ktx.load
 import com.github.ramonrabello.favoritehero.core.ktx.obtainViewModel
 import com.github.ramonrabello.favoritehero.core.ktx.toTypeface
-import com.github.ramonrabello.favoritehero.data.model.DetailData
 import com.github.ramonrabello.favoritehero.data.repository.local.entity.FavoriteHero
 import com.github.ramonrabello.favoritehero.heroes.FavoriteHeroViewModel
-import com.github.ramonrabello.favoritehero.heroes.ItemSpacingDecoration
+import com.github.ramonrabello.favoritehero.core.view.ItemSpacingDecoration
 import dagger.android.AndroidInjection
 import dagger.android.AndroidInjector
 import dagger.android.DispatchingAndroidInjector
@@ -39,7 +33,6 @@ import kotlinx.android.synthetic.main.content_character_detail.series_recycler_v
 import kotlinx.android.synthetic.main.content_character_detail.series_section_title
 import kotlinx.android.synthetic.main.content_character_detail.stories_recycler_view
 import kotlinx.android.synthetic.main.content_character_detail.stories_section_title
-import kotlinx.coroutines.experimental.launch
 import javax.inject.Inject
 
 /**
@@ -68,18 +61,17 @@ class CharacterDetailActivity : AppCompatActivity(), HasActivityInjector {
         setContentView(R.layout.activity_character_detail)
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        val heartOutlineDrawable = ContextCompat.getDrawable(this, R.drawable.ic_heart_outline)
-        val heartFilledDrawable = ContextCompat.getDrawable(this, R.drawable.ic_heart_filled)
+        ActivityCompat.postponeEnterTransition(this)
         favoriteHeroViewModel = obtainViewModel(viewModelFactory, FavoriteHeroViewModel::class.java)
         detailViewModel = obtainViewModel(viewModelFactory, CharacterDetailViewModel::class.java)
         favoriteHeroViewModel.favoriteIconStateLiveData.observe(this, Observer<Boolean> { isFavorite ->
-            val drawableTint = ContextCompat.getColor(this, android.R.color.white)
             isFavorite?.let {
-                if (isFavorite) {
-                    updateFabState(heartFilledDrawable, drawableTint)
+                val drawable = if (isFavorite) {
+                    ContextCompat.getDrawable(this, R.drawable.ic_heart_filled_white)
                 } else {
-                    updateFabState(heartOutlineDrawable, drawableTint)
+                    ContextCompat.getDrawable(this, R.drawable.ic_heart_outline_white)
                 }
+                fab.setImageDrawable(drawable)
             }
         })
 
@@ -119,7 +111,7 @@ class CharacterDetailActivity : AppCompatActivity(), HasActivityInjector {
     }
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
-        return when(item?.itemId){
+        return when (item?.itemId) {
             android.R.id.home -> {
                 ActivityCompat.finishAfterTransition(this)
                 true
@@ -131,43 +123,50 @@ class CharacterDetailActivity : AppCompatActivity(), HasActivityInjector {
     override fun onResume() {
         super.onResume()
         val favoriteHero: FavoriteHero = intent.getParcelableExtra(EXTRA_FAVORITE_HERO)
-        fab.setOnClickListener { _ -> launch { favoriteHeroViewModel.addOrRemoveFavoriteHero(favoriteHero) } }
+        fab.setOnClickListener { favoriteHeroViewModel.addOrRemoveFavoriteHero(favoriteHero) }
         bindData(favoriteHero)
     }
 
     private fun bindData(favoriteHero: FavoriteHero) {
         observeCharacterDetails()
         detailViewModel.loadCharacterDetails(favoriteHero.id)
-        favoriteHeroViewModel.observeFavoriteHeroState(favoriteHero.id)
+        favoriteHeroViewModel.observeFavoriteHeroState(favoriteHero)
+        favoriteHeroViewModel.favoriteIconStateLiveData.observe(this, Observer { isFavorite ->
+            isFavorite?.let {
+                if (isFavorite){
+                    fab.setImageResource(R.drawable.ic_heart_filled_white)
+                } else {
+                    fab.setImageResource(R.drawable.ic_heart_outline_white)
+                }
+            }
+        })
         ViewCompat.setTransitionName(hero_description, favoriteHero.description)
         ViewCompat.setTransitionName(hero_parallax_image, favoriteHero.thumbnail)
         toolbar.title = favoriteHero.name
-        hero_description.text = favoriteHero.description
-        hero_parallax_image.load(favoriteHero.thumbnail)
+        hero_description.text = if (favoriteHero.description == null || favoriteHero.description.isEmpty()) {
+            getString(R.string.detail_data_description_empty)
+        } else {
+            favoriteHero.description
+        }
+        hero_parallax_image.load(this, favoriteHero.thumbnail, true)
     }
 
     private fun observeCharacterDetails() {
-        detailViewModel.characterComicsLiveData.observe(this, Observer<List<DetailData>> { comics ->
+        detailViewModel.characterComicsLiveData.observe(this, Observer { comics ->
             comics?.let { comicAdapter.addItems(comics) }
         })
 
-        detailViewModel.characterEventsLiveData.observe(this, Observer<List<DetailData>> { events ->
+        detailViewModel.characterEventsLiveData.observe(this, Observer { events ->
             events?.let { eventAdapter.addItems(events) }
         })
 
-        detailViewModel.characterStoriesLiveData.observe(this, Observer<List<DetailData>> { stories ->
+        detailViewModel.characterStoriesLiveData.observe(this, Observer { stories ->
             stories?.let { storyAdapter.addItems(stories) }
         })
 
-        detailViewModel.characterSeriesLiveData.observe(this, Observer<List<DetailData>> { series ->
+        detailViewModel.characterSeriesLiveData.observe(this, Observer { series ->
             series?.let { seriesAdapter.addItems(series) }
         })
-    }
-
-    private fun updateFabState(drawable: Drawable?, @ColorInt drawableTint: Int) {
-        val wrappedDrawable = drawable?.let { DrawableCompat.wrap(drawable) }
-        wrappedDrawable?.let { DrawableCompat.setTint(wrappedDrawable, drawableTint) }
-        fab.setImageDrawable(wrappedDrawable)
     }
 
     override fun activityInjector(): AndroidInjector<Activity> {

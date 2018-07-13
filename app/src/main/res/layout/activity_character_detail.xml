@@ -23,7 +23,7 @@
             app:layout_scrollFlags="scroll|exitUntilCollapsed"
             app:statusBarScrim="@color/colorAccent"
             app:contentScrim="@color/colorPrimary"
-            app:toolbarId="@+id/toolbar">
+            app:toolbarId="@+id/main_toolbar">
 
             <ImageView
                 android:id="@+id/hero_parallax_image"
@@ -58,6 +58,6 @@
         app:layout_anchor="@id/app_bar"
         app:layout_anchorGravity="bottom|end"
         app:backgroundTint="@color/persianRed"
-        app:srcCompat="@drawable/ic_heart_outline" />
+        app:srcCompat="@drawable/ic_heart_outline_white" />
 
 </android.support.design.widget.CoordinatorLayout>

@@ -8,6 +8,7 @@
     <com.malinskiy.superrecyclerview.SuperRecyclerView
         android:id="@+id/recycler_view"
         app:recyclerClipToPadding="false"
+        app:layout_moreProgress="@layout/load_more_progress"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 

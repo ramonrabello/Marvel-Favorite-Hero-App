@@ -3,72 +3,76 @@ package com.github.ramonrabello.favoritehero.heroes
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
 import android.util.Log
-import com.github.ramonrabello.favoritehero.data.model.CharacterDataWrapper
+import com.github.ramonrabello.favoritehero.R
+import com.github.ramonrabello.favoritehero.core.ktx.commonSubscribe
 import com.github.ramonrabello.favoritehero.data.model.Character
 import com.github.ramonrabello.favoritehero.data.repository.remote.MarvelRemoteRepository
-import io.reactivex.MaybeObserver
-import io.reactivex.android.schedulers.AndroidSchedulers
+import com.malinskiy.superrecyclerview.OnMoreListener
+import io.reactivex.Maybe
+import io.reactivex.Observable
 import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.disposables.Disposable
-import io.reactivex.schedulers.Schedulers
+import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 /**
- * View model for [HeroListFragment].
+ * View model for [HeroListFragment] that call repository and notifies the View about
+ * updates using [MutableLiveData].
  */
-class HeroListViewModel @Inject constructor(private val repository: MarvelRemoteRepository) : ViewModel() {
+class HeroListViewModel @Inject internal constructor(private val repository: MarvelRemoteRepository) : ViewModel(), OnMoreListener {
 
     val allHeroesLiveData = MutableLiveData<List<Character>>()
-    val errorLiveData = MutableLiveData<Throwable>()
+    val searchResultsLiveData = MutableLiveData<List<Character>>()
+    val errorLiveData = MutableLiveData<Int>()
     private val compositeDisposable = CompositeDisposable()
+    var currentOffset: Int = 0
+        private set
+
+    var isSearching: Boolean = false
 
     companion object {
         const val TAG = "HeroListViewModel"
+        const val RESULTS_OFFSET = 20
     }
 
     fun loadHeroes(offset: Int = 0) {
-        repository.getAllCharacters(offset)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeWith(object : MaybeObserver<CharacterDataWrapper> {
-                    override fun onSuccess(item: CharacterDataWrapper?) {
-                        allHeroesLiveData.postValue(item?.data?.results)
-                    }
-
-                    override fun onSubscribe(d: Disposable?) {
-                        compositeDisposable.add(d)
-                    }
-
-                    override fun onComplete() {}
-                    override fun onError(e: Throwable) {
-                        errorLiveData.postValue(e)
-                    }
-                })
+        val disposable = repository.getAllCharacters(offset)
+                .flatMap { item -> Maybe.just(item.data.results) }
+                .commonSubscribe(
+                        { characters -> allHeroesLiveData.postValue(characters) },
+                        { errorLiveData.postValue(R.string.network_request_error) }
+                )
+        compositeDisposable.add(disposable)
     }
 
-    fun searchHeroes(query:String) {
-        repository.getCharactersByName(query)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeWith(object : MaybeObserver<CharacterDataWrapper> {
-                    override fun onSuccess(item: CharacterDataWrapper?) {
-                        allHeroesLiveData.postValue(item?.data?.results)
-                    }
+    fun searchHeroes(query: String) {
+        if (query.isNotEmpty() && query.length > 5) {
+            val disposable = repository.getCharactersByName(query)
+                    .toObservable()
+                    .debounce(1, TimeUnit.MILLISECONDS)
+                    .flatMap { item -> Observable.just(item.data.results) }
+                    .commonSubscribe(
+                            { characters -> searchResultsLiveData.postValue(characters) },
+                            {
+                                errorLiveData.postValue(R.string.network_request_error)
+                            }
+                    )
+            compositeDisposable.add(disposable)
+        } else {
+            isSearching = false
+            loadHeroes()
+        }
+    }
 
-                    override fun onSubscribe(d: Disposable?) {
-                        compositeDisposable.add(d)
-                    }
-
-                    override fun onComplete() {}
-                    override fun onError(e: Throwable) {
-                        errorLiveData.postValue(e)
-                    }
-                })
+    override fun onMoreAsked(overallItemsCount: Int, itemsBeforeMore: Int, maxLastVisiblePosition: Int) {
+        if (itemsBeforeMore + maxLastVisiblePosition >= overallItemsCount) {
+            currentOffset = currentOffset.plus(RESULTS_OFFSET)
+            loadHeroes(currentOffset)
+        }
     }
 
     override fun onCleared() {
         Log.d(TAG, "onCleared()")
-        compositeDisposable.dispose()
-        super.onCleared()
+        // clear disposables to avoid memory leaks
+        compositeDisposable.clear()
     }
 }

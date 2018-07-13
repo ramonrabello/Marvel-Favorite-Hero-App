@@ -81,7 +81,7 @@ class NetworkModule {
 
     @Provides
     @Singleton
-    internal fun provideRemoteHeroRepository(marvelApi: MarvelApi): MarvelRemoteRepository {
+    internal fun provideRemoteMarvelRepository(marvelApi: MarvelApi): MarvelRemoteRepository {
         return MarvelRemoteRepository(marvelApi)
     }
 }

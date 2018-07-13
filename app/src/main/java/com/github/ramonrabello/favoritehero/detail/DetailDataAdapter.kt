@@ -1,5 +1,6 @@
 package com.github.ramonrabello.favoritehero.detail
 
+import android.app.Activity
 import android.view.View
 import android.view.ViewGroup
 import com.github.ramonrabello.favoritehero.R
@@ -28,7 +29,7 @@ class DetailDataAdapter : BaseAdapter<DetailData, DetailDataAdapter.DetailDataVi
         override fun bind(item: DetailData) {
             itemView.apply {
                 detail_data_title.text = item.title
-                detail_data_description.text = if (item.description == null || item.description.isEmpty()){
+                detail_data_description.text = if (item.description == null || item.description.isEmpty()) {
                     context.getString(R.string.detail_data_description_empty)
                 } else {
                     item.description
@@ -36,7 +37,7 @@ class DetailDataAdapter : BaseAdapter<DetailData, DetailDataAdapter.DetailDataVi
 
                 item.thumbnail?.let {
                     detail_data_image.show()
-                    detail_data_image.load(item.thumbnail.toString())
+                    detail_data_image.load(itemView.context as Activity, item.thumbnail.toString())
                 }
                 detail_data_title.toTypeface("OpenSans-Regular")
                 detail_data_description.toTypeface("OpenSans-Light")
