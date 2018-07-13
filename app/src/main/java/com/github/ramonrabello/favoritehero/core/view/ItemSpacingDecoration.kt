@@ -1,4 +1,4 @@
-package com.github.ramonrabello.favoritehero.heroes
+package com.github.ramonrabello.favoritehero.core.view
 
 import android.graphics.Rect
 import android.support.annotation.IntRange
