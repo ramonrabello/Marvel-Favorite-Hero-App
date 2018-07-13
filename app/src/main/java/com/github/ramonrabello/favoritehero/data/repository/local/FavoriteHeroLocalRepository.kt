@@ -1,13 +1,16 @@
 package com.github.ramonrabello.favoritehero.data.repository.local
 
-import android.arch.lifecycle.LiveData
 import com.github.ramonrabello.favoritehero.data.repository.local.entity.FavoriteHero
+import io.reactivex.Maybe
+import io.reactivex.Single
+import kotlinx.coroutines.experimental.DefaultDispatcher
 import kotlinx.coroutines.experimental.launch
-import kotlinx.coroutines.experimental.runBlocking
+import kotlinx.coroutines.experimental.withContext
 import javax.inject.Inject
 
 /**
- *
+ * Local repository that calls the [FavoriteHeroDao]
+ * class related to persistence in Room.
  */
 class FavoriteHeroLocalRepository @Inject constructor(private val heroDao: FavoriteHeroDao) {
 
@@ -15,19 +18,19 @@ class FavoriteHeroLocalRepository @Inject constructor(private val heroDao: Favor
         launch { heroDao.insert(item) }
     }
 
-    fun loadAllHeroes(): LiveData<List<FavoriteHero>> {
-        return heroDao.allHeroes()
+    fun loadAllHeroes(): Maybe<List<FavoriteHero>> {
+        return heroDao.loadAllFavoriteHeroes()
     }
 
     fun delete(item: FavoriteHero) {
         launch { heroDao.delete(item) }
     }
 
-    fun searchByName(name: String): LiveData<List<FavoriteHero>> {
+    fun searchByName(name: String): Maybe<List<FavoriteHero>> {
         return heroDao.searchHeroByName(name)
     }
 
-    fun findById(itemId: Long): FavoriteHero? {
-        return runBlocking { heroDao.findHeroById(itemId) }
+    suspend fun findById(itemId: Long): Single<FavoriteHero> {
+        return withContext(DefaultDispatcher) { heroDao.findHeroById(itemId) }
     }
 }
