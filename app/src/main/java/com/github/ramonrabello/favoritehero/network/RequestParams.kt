@@ -8,4 +8,5 @@ object RequestParams {
     const val HASH = "hash"
     const val TIMESTAMP = "ts"
     const val LIMIT = "limit"
+    const val DETAILS_DATA_LIMIT = 3
 }

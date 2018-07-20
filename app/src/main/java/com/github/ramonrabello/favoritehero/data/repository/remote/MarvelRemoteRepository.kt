@@ -6,6 +6,7 @@ import com.github.ramonrabello.favoritehero.data.model.EventDataWrapper
 import com.github.ramonrabello.favoritehero.data.model.SeriesDataWrapper
 import com.github.ramonrabello.favoritehero.data.model.StoryDataWrapper
 import com.github.ramonrabello.favoritehero.network.MarvelApi
+import com.github.ramonrabello.favoritehero.network.RequestParams
 import io.reactivex.Maybe
 import javax.inject.Inject
 
@@ -23,18 +24,18 @@ class MarvelRemoteRepository @Inject constructor(private val marvelApi: MarvelAp
     }
 
     fun getCharacterComics(characterId: Long): Maybe<ComicDataWrapper> {
-        return marvelApi.getCharacterComics(characterId)
+        return marvelApi.getCharacterComics(characterId, RequestParams.DETAILS_DATA_LIMIT)
     }
 
     fun getCharacterEvents(characterId: Long): Maybe<EventDataWrapper> {
-        return marvelApi.getCharacterEvents(characterId)
+        return marvelApi.getCharacterEvents(characterId, RequestParams.DETAILS_DATA_LIMIT)
     }
 
     fun getCharacterStories(characterId: Long): Maybe<StoryDataWrapper> {
-        return marvelApi.getCharacterStories(characterId)
+        return marvelApi.getCharacterStories(characterId, RequestParams.DETAILS_DATA_LIMIT)
     }
 
     fun getCharacterSeries(characterId: Long): Maybe<SeriesDataWrapper> {
-        return marvelApi.getCharacterSeries(characterId)
+        return marvelApi.getCharacterSeries(characterId, RequestParams.DETAILS_DATA_LIMIT)
     }
 }

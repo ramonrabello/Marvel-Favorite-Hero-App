@@ -22,14 +22,14 @@ interface MarvelApi {
     fun getCharactersByName(@Query("name") query: String): Maybe<CharacterDataWrapper>
 
     @GET("/v1/public/characters/{character_id}/comics")
-    fun getCharacterComics(@Path("character_id") characterId: Long): Maybe<ComicDataWrapper>
+    fun getCharacterComics(@Path("character_id") characterId: Long, @Query("limit") limit:Int): Maybe<ComicDataWrapper>
 
     @GET("/v1/public/characters/{character_id}/events")
-    fun getCharacterEvents(@Path("character_id") characterId: Long): Maybe<EventDataWrapper>
+    fun getCharacterEvents(@Path("character_id") characterId: Long, @Query("limit") limit:Int): Maybe<EventDataWrapper>
 
     @GET("/v1/public/characters/{character_id}/stories")
-    fun getCharacterStories(@Path("character_id") characterId: Long): Maybe<StoryDataWrapper>
+    fun getCharacterStories(@Path("character_id") characterId: Long, @Query("limit") limit:Int): Maybe<StoryDataWrapper>
 
     @GET("/v1/public/characters/{character_id}/series")
-    fun getCharacterSeries(@Path("character_id") characterId: Long): Maybe<SeriesDataWrapper>
+    fun getCharacterSeries(@Path("character_id") characterId: Long, @Query("limit") limit:Int): Maybe<SeriesDataWrapper>
 }

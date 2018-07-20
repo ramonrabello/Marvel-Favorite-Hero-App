@@ -5,13 +5,16 @@ import android.arch.lifecycle.ViewModel
 import android.util.Log
 import com.github.ramonrabello.favoritehero.R
 import com.github.ramonrabello.favoritehero.core.ktx.commonSubscribe
+import com.github.ramonrabello.favoritehero.data.model.CharacterDetailsModel
+import com.github.ramonrabello.favoritehero.data.model.ComicDataWrapper
 import com.github.ramonrabello.favoritehero.data.model.DetailData
+import com.github.ramonrabello.favoritehero.data.model.EventDataWrapper
+import com.github.ramonrabello.favoritehero.data.model.SeriesDataWrapper
+import com.github.ramonrabello.favoritehero.data.model.StoryDataWrapper
 import com.github.ramonrabello.favoritehero.data.repository.remote.MarvelRemoteRepository
 import io.reactivex.Maybe
-import io.reactivex.Observable
-import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.schedulers.Schedulers
+import io.reactivex.functions.Function4
 import javax.inject.Inject
 
 /**
@@ -28,7 +31,6 @@ class CharacterDetailViewModel @Inject internal constructor(val repository: Marv
 
     companion object {
         const val TAG = "CharDetailViewModel"
-        const val RESULTS_SIZE = 3
     }
 
     /**
@@ -36,50 +38,26 @@ class CharacterDetailViewModel @Inject internal constructor(val repository: Marv
      * as the data are available (comics, events, stories and series).
      */
     fun loadCharacterDetails(characterId: Long) {
-        loadCharacterComics(characterId)
-        loadCharacterEvents(characterId)
-        loadCharacterStories(characterId)
-        loadCharacterSeries(characterId)
-    }
-
-    private fun loadCharacterSeries(characterId: Long) {
-        val disposable = repository.getCharacterSeries(characterId)
-                .flatMap { item -> Maybe.just(item.data.results) }
-                .commonSubscribe(
-                        { series -> characterSeriesLiveData.postValue(series.take(RESULTS_SIZE)) },
-                        { errorLiveData.postValue(R.string.character_detail_loading_error) }
-                )
+        val disposable = Maybe.zip(repository.getCharacterComics(characterId),
+                repository.getCharacterEvents(characterId),
+                repository.getCharacterStories(characterId),
+                repository.getCharacterSeries(characterId),
+                Function4<ComicDataWrapper, EventDataWrapper, StoryDataWrapper, SeriesDataWrapper, CharacterDetailsModel> { comic, event, stories, series ->
+                    createCharacterDetailsModel(comic, event, stories, series)
+                }).commonSubscribe(
+                { details ->
+                    characterComicsLiveData.postValue(details.comics)
+                    characterEventsLiveData.postValue(details.events)
+                    characterStoriesLiveData.postValue(details.stories)
+                    characterSeriesLiveData.postValue(details.series)
+                },
+                { errorLiveData.postValue(R.string.character_detail_loading_error) }
+        )
         compositeDisposable.add(disposable)
     }
 
-    private fun loadCharacterStories(characterId: Long) {
-        val disposable = repository.getCharacterStories(characterId)
-                .flatMap { item -> Maybe.just(item.data.results) }
-                .commonSubscribe(
-                        { stories -> characterStoriesLiveData.postValue(stories.take(RESULTS_SIZE)) },
-                        { errorLiveData.postValue(R.string.character_detail_loading_error) }
-                )
-        compositeDisposable.add(disposable)
-    }
-
-    private fun loadCharacterEvents(characterId: Long) {
-        val disposable = repository.getCharacterEvents(characterId)
-                .flatMap { item -> Maybe.just(item.data.results) }
-                .commonSubscribe(
-                    { events -> characterEventsLiveData.postValue(events.take(RESULTS_SIZE)) },
-                    { errorLiveData.postValue(R.string.character_detail_loading_error) }
-                )
-        compositeDisposable.add(disposable)
-    }
-
-    private fun loadCharacterComics(characterId: Long) {
-        val disposable = repository.getCharacterComics(characterId)
-                .flatMap { item -> Maybe.just(item.data.results) }
-                .commonSubscribe(
-                        { comics -> characterComicsLiveData.postValue(comics.take(RESULTS_SIZE)) },
-                        { errorLiveData.postValue(R.string.character_detail_loading_error) }
-                )
-        compositeDisposable.add(disposable)
+    private fun createCharacterDetailsModel(comic: ComicDataWrapper, event: EventDataWrapper, stories: StoryDataWrapper, series: SeriesDataWrapper): CharacterDetailsModel {
+        return CharacterDetailsModel(comic.data.results, event.data.results, stories.data.results, series.data.results)
     }
 
     override fun onCleared() {
